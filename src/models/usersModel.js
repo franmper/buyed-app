@@ -1,5 +1,5 @@
 import { action, thunk, computed } from "easy-peasy";
-import {signIn, signUp} from "../services/auth"
+import {signIn, signUp, checkTokenService} from "../services/auth"
 
 const usersModel = {
   user: {},
@@ -13,8 +13,18 @@ const usersModel = {
       actions.setUser(user)
     });
   }),
+  checkToken: thunk(async (actions, payload) => {
+    await checkTokenService(payload).then(userToken => {
+      if(userToken == null) {
+        actions.setUserToken(userToken);
+      }
+    })
+  }),
   setUser: action((state, payload) => {
     state.user = payload;
+  }),
+  setUserToken: action((state, payload) => {
+    state.user.jwt = payload;
   }),
   isSignedIn: computed(state => state.user.jwt != null),
 };

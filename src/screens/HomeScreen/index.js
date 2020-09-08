@@ -1,16 +1,23 @@
-import React, {useState} from 'react';
-import {View, Text} from 'react-native';
+import React, {useState, useEffect} from 'react';
 import BuyedRoutes from '../../routes/BuyedStack';
 import AuthRoutes from '../../routes/AuthStack';
 import { NavigationContainer } from '@react-navigation/native';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState, useStoreActions } from 'easy-peasy';
+import Loading from '../../components/Loading';
 
 const HomeScreen = () => {
-  const userToken = useStoreState(state => state.user.user.jwt)
-  const user = useStoreState(state => state.user.user)
-  const isSignedIn = useStoreState(state => state.user.isSignedIn)
+  const [isLoading, setIsLoading] = useState(true)
 
-  console.log(user)
+  const userToken = useStoreState(state => state.user.user.jwt)
+  const isSignedIn = useStoreState(state => state.user.isSignedIn)
+  const checkUserToken = useStoreActions(state => state.user.checkToken)
+
+  useEffect(() => {
+    checkUserToken(userToken);
+    setIsLoading(false)
+  }, [])
+
+  if(isLoading === true) return <Loading />
 
   return (
     <NavigationContainer>
