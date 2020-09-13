@@ -8,14 +8,20 @@ export const signIn = async payload => {
   };
 
   let user = {};
+  let error = null;
 
   await axios({
     method: 'POST',
     url: `${Config.API_URL}/auth/local`,
     data: body,
-  }).then(res => (user = res.data));
+  })
+    .then(res => (user = res.data))
+    .catch(err => (error = err));
 
-  return user;
+  return {
+    user,
+    error,
+  };
 };
 
 export const signUp = async payload => {
@@ -26,20 +32,26 @@ export const signUp = async payload => {
   };
 
   let user = {};
+  let error = null;
 
   await axios({
     method: 'POST',
     url: `${Config.API_URL}/auth/local/register`,
     data: body,
-  }).then(res => (user = res.data));
+  })
+    .then(res => (user = res.data))
+    .catch(err => (error = err));
 
-  return user;
+  return {
+    user,
+    error,
+  };
 };
 
 export const checkTokenService = async payload => {
   const headers = {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${payload}`
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${payload}`,
   };
 
   let user = {};
@@ -47,12 +59,12 @@ export const checkTokenService = async payload => {
   await axios({
     method: 'GET',
     url: `${Config.API_URL}/users/me`,
-    headers: headers
+    headers: headers,
   }).then(res => {
-    if(res.data.message == "Invalid token." || res.data.statusCode == 401){
-      user = null
+    if (res.data.message == 'Invalid token.' || res.data.statusCode == 401) {
+      user = null;
     } else {
-      user = res.data
+      user = res.data;
     }
   });
 
